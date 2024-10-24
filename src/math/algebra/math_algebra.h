@@ -1,0 +1,4 @@
+#ifndef MUTILS_MATH_ALGEBRA_H
+#define MUTILS_MATH_ALGEBRA_H
+
+#endif

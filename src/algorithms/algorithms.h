@@ -1,0 +1,4 @@
+#ifndef MUTILS_ALGORITHMS_H
+#define MUTILS_ALGORITHMS_H
+
+#endif

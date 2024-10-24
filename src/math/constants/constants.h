@@ -1,0 +1,4 @@
+#ifndef MUTILS_MATH_CONSTANTS_H
+#define MUTILS_MATH_CONSTANTS_H
+
+#endif
