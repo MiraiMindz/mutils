@@ -6,7 +6,7 @@
 #endif
 
 #ifndef MATRIX_2x2_TYPE
-#define MATRIX_2x3_TYPE float
+#define MATRIX_2x2_TYPE float
 #endif
 
 #ifndef MATRIX_2x3_TYPE
