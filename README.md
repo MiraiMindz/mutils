@@ -45,6 +45,9 @@ list:
 - Extended Math Lib
 - Algorithms
 - Color Lib
+- Functions
+    - Error
+        - Error handling utils like panic
 - and much more (I'll expand this list over time)
 
 every data-type has a dynamic and static variant too.
