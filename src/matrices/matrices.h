@@ -41,13 +41,11 @@
 #define MATRIX_4x3_TYPE float
 #endif
 
-
 typedef struct matXxY {
     signed long rows;
     signed long cols;
-    GENERIC_MATRIX_TYPE* data;
+    GENERIC_MATRIX_TYPE *data;
 } matXxY_t;
-
 
 /*
     [
@@ -66,7 +64,6 @@ typedef union mat2 {
     MATRIX_2x2_TYPE flat[4];
 } mat2_t;
 
-
 /*
     [
         [a, b, c],
@@ -83,7 +80,6 @@ typedef union mat2x3 {
     };
     MATRIX_2x3_TYPE flat[6];
 } mat2x3_t;
-
 
 /*
     [
@@ -102,9 +98,6 @@ typedef union mat2x4 {
     MATRIX_2x4_TYPE flat[8];
 } mat2x4_t;
 
-
-
-
 /*
     [
         [a, b, c, d]
@@ -119,14 +112,11 @@ typedef union mat4 {
     };
     MATRIX_4x4_TYPE matrix[4][4];
     struct {
-        MATRIX_4x4_TYPE a1, a2, a3, a4, 
-                        b1, b2, b3, b4,
-                        c1, c2, c3, c4,
-                        d1, d2, d3, d4;
+        MATRIX_4x4_TYPE a1, a2, a3, a4, b1, b2, b3, b4, c1, c2, c3, c4, d1, d2,
+            d3, d4;
     };
     MATRIX_4x4_TYPE flat[16];
 } mat4_t;
-
 
 /*
     [
@@ -147,7 +137,6 @@ typedef union mat4x2 {
     MATRIX_4x2_TYPE flat[8];
 } mat4x2_t;
 
-
 /*
     [
         [a, b, c]
@@ -167,9 +156,6 @@ typedef union mat4x3 {
     MATRIX_4x3_TYPE flat[12];
 } mat4x3_t;
 
-
-
-
 /*
     [
         [a, b, c]
@@ -187,7 +173,6 @@ typedef union mat3 {
     };
     MATRIX_3x3_TYPE flat[9];
 } mat3_t;
-
 
 /*
     [
@@ -207,7 +192,6 @@ typedef union mat3x2 {
     MATRIX_3x2_TYPE flat[6];
 } mat3x2_t;
 
-
 /*
     [
         [a, b, c, d]
@@ -226,5 +210,5 @@ typedef union mat3x4 {
     MATRIX_3x4_TYPE flat[12];
 } mat3x4_t;
 
-
 #endif
+

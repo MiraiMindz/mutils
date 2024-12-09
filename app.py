@@ -7,6 +7,41 @@
 # matrices types, judge me if you want.
 #                                                                        - Mirai
 
+# [x] - Identity
+# [x] - Zero
+# [x] - Multiplication X * Y
+# [x]     - Matrix-Matrix Product
+# [x]     - Hadamard product
+# [ ] - Multiplication N (Multiplies N matrices)
+# [ ]     - Matrix-Matrix Product
+# [ ]     - Hadamard product
+# [x] - Trace
+# [x] - Quaternion
+# [x]     - from quaternion
+# [x]     - to quaternion
+# [ ] - Transpose
+# [ ] - Scale
+# [ ]     - Scale Scalar multiplication
+# [ ]     - Scale Transform
+# [ ] - Determinant
+# [ ]     - Leibniz formula
+# [ ]     - Laplace expansion formula
+# [ ] - Swap Row (Swaps two rows)
+# [ ] - Swap Column (Swaps two columns)
+# [ ] - Swap Column-Row (Swaps a column for a row)
+# [ ] - Division X * Y
+# [ ] - Division N (Divides N matrices)
+# [ ] - Addition X + Y
+# [ ] - Addition N (Adds N matrices)
+# [ ] - Subtraction X - Y
+# [ ] - Subtraction N (Subtracts N matrices)
+# [ ] - Padding (get an XY mat and make it a perfect square based on the bigger side)
+# [ ] - Flip X
+# [ ] - Flip Y
+# [ ] - Rotate Left
+# [ ] - Rotate Right
+# [ ] - Invert/Inverse the matrix
+
 MATRICES = [
     (2, 2),
     (2, 3),
@@ -40,12 +75,37 @@ for a in MATRICES:
         print(f"mat{a[0]}_t mat{a[0]}_identity_ret();\n")
 print("\n\n")
 
+# Trace
 for a in MATRICES:
     if (a[0] == a[1]):
         print(f"// This function RETURNS a value of type mat{a[0]}_t")
         print(f"// This produces the Trace of the matrix {a[0]}x{a[1]}")
         print(f"mat{a[0]}_t mat{a[0]}_trace_ret();\n")
 print("\n\n")
+
+# Quaternion
+for a in MATRICES:
+    if (a[0] == a[1]) and (a[0] == 4):
+        print(f"// This function RETURNS the type of mat{a[0]}_t")
+        print(f"// This function converts a quaternion into a {a[0]}x{a[0]} matrix")
+        print(f"mat{a[0]}_t quat_to_mat{a[0]}x{a[0]}(const MATRIX_{a[0]}x{a[0]}_TYPE* quaternion);\n")
+        print("\n")
+        print(f"// This function RETURNS the type of MATRIX_{a[0]}x{a[0]}_TYPE*")
+        print(f"// This function converts a {a[0]}x{a[0]} matrix into a quaternion")
+        print(f" MATRIX_{a[0]}x{a[0]}_TYPE* quat_from_mat{a[0]}(const mat{a[0]}_t matrix);\n")
+print("\n\n")
+
+for a in MATRICES:
+    if a[0] == a[1]:
+        print(f"// This function RETURNS the type of mat{a[1]}x{a[0]}_t")
+        print(f"// This function transpose the {a[0]}x{a[1]} into a {a[1]}x{a[0]} matrix")
+        print(f"mat{a[0]}_t mat{a[0]}_transpose(mat{a[0]}_t matrix);\n")
+    else:
+        print(f"// This function RETURNS the type of mat{a[0]}x{a[1]}_t")
+        print(f"// This function transpose the {a[0]}x{a[1]} into a {a[1]}x{a[0]} matrix")
+        print(f"mat{a[1]}x{a[0]}_t mat{a[0]}x{a[1]}_transpose(mat{a[0]}x{a[1]}_t matrix);\n")
+print("\n\n")
+
 
 # Matrix-Matrix Multiplication
 for a in MATRICES:
@@ -149,6 +209,7 @@ for a in MATRICES:
         print(f"// This produces the Identity of the matrix {a[0]}x{a[1]}")
         print(f"void mat{a[0]}_identity_ptr(mat{a[0]}_t* dest);\n")
 print("\n\n")
+
 
 
 # Matrix-Matrix Multiplication

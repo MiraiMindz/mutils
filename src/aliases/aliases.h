@@ -16,7 +16,6 @@ typedef signed long     isize;
 typedef void*           ptr; 
 typedef char*           str;
 
-
 // need these safeguads to not conflict with the <stdbool.h> file.
 #ifndef __bool_true_false_are_defined
 #define __bool_true_false_are_defined 1
