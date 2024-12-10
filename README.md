@@ -2,17 +2,57 @@
 
 This library contains everything that I find missing and I'm always making in C.
 
-> BTW This library uses ANSI C because compatibility reasons.
+It's a single header file, so to include it just copy it to your project and
+reference it in your code.
+
+> BTW This library uses ANSI C89 because compatibility reasons.
 >
 > and yeah it is also bare C without any compiler extensions too because yes.
 >
 > and finally no C++ because we all know that C++ is the weaker C.
 
+## How to use it (and some notes)
+
+If you _really_ want to use compiler extensions and/or standard library definitions
+you can specify two macros `MUTILS_USE_COMPILER_EXTENSIONS` and `MUTILS_USE_STD_INCLUDES`
+respectively.
+
+You can also configure the library, by defining some macros before #including it.
+
+How do you use it?
+
+specify what you want and include the library, example:
+
+```c
+#define MUTILS_SOURCE 1
+#define MUTILS_TYPE_ALIASES 1
+#define MUTILS_MATH 1
+#define MUTILS_MATH_CONSTANTS 1
+#define MUTILS_MATRICES 1
+#include "mutils.h"
+```
+
+> note: the 1 after the define is just to ensures that it is defined.
+
+> note2: the MUTILS_SOURCE MUST BE defined before any module that you want to
+> include the source implementation.
+
+
+This will define the following library modules:
+- all the source implementations, not just prototypes.
+- type aliases
+- enables any math module to be activated.
+- active the math constant module.
+- enables the matrices module (not a math module).
+
+and yes, defining MUTILS_MATH does not include all the math related modules by
+default, you need to enable each one of them.
+
 ## What you will find here?
 
-list:
+> you will find the module name between parenthesis for each module listed here.
 
-- Type Aliases
+- Type Aliases (MUTILS_TYPE_ALIASES)
 - Queues
     - Static Queue
     - dynamic queue
@@ -39,10 +79,12 @@ list:
     - hash table
 - Maps
     - Basic Map
-- Matrices
-- Vectors
+- Matrices (MUTILS_MATRICES)
+- Vectors (MUTILS_VECTORS)
 - Graphs
-- Extended Math Lib
+- Extended Math Lib (MUTILS_MATH)
+    - Constants (MUTILS_MATH_CONSTANTS)
+    - Algebra (MUTILS_MATH_ALGEBRA)
 - Algorithms
 - Color Lib
 - Functions
@@ -51,28 +93,3 @@ list:
 - and much more (I'll expand this list over time)
 
 every data-type has a dynamic and static variant too.
-
-## Build, Install and Use
-
-```bash
-git clone https://github.com/MiraiMindz/mutils.git
-cd mutils
-mkdir build
-cd build
-cmake ..
-make
-sudo make install
-```
-
-Including in CMAKE project:
-
-```cmake
-cmake_minimum_required(VERSION 3.10)
-project(YourProject C)
-
-find_library(MUTILS_LIB NAMES mutils PATHS /usr/local/lib)
-include_directories(/usr/local/include/mutils)
-
-add_executable(YourProject main.c)
-target_link_libraries(YourProject ${MUTILS_LIB})
-```
