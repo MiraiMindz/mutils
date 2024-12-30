@@ -90,6 +90,7 @@ default, you need to enable each one of them.
 - Functions
     - Error
         - Error handling utils like panic
+    - Dynamic Arrays (MUTILS_DA)
 - and much more (I'll expand this list over time)
 
 every data-type has a dynamic and static variant too.

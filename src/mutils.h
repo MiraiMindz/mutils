@@ -91,6 +91,7 @@ default, you need to enable each one of them.
 - Functions
     - Error
         - Error handling utils like panic
+    - Dynamic Arrays (MUTILS_FUNCTIONS_DA)
 - and much more (I'll expand this list over time)
 
 every data-type has a dynamic and static variant too.
@@ -99,7 +100,7 @@ every data-type has a dynamic and static variant too.
 #ifndef MUTILS_H
 #define MUTILS_H
 
-#ifndef MUTILS_TYPE_ALIASES
+#ifdef MUTILS_TYPE_ALIASES
     typedef float f32;
     typedef double f64;
     typedef unsigned char u8;
@@ -110,30 +111,16 @@ every data-type has a dynamic and static variant too.
     typedef signed int i32;
     typedef void *ptr;
     typedef char *str;
-    #if defined(__x86_64__) && !defined(__ILP32__)      /* 64 Bits */
-        #if __STDC_VERSION__ >= 199901L                 /* C99 or newer */
-            typedef unsigned long long u64;
-            typedef signed long long i64;
-            typedef unsigned long long usize;
-            typedef signed long long isize;
-        #else                                           /* older than C99 */
-            typedef unsigned long u64;
-            typedef signed long i64;
-            typedef unsigned long usize;
-            typedef signed long isize;
-        #endif
-    #else                                               /* 32 Bits */
-        #if __STDC_VERSION__ >= 199901L
-            typedef unsigned long long u64;
-            typedef signed long long i64;
+    #if __STDC_VERSION__ >= 199901L                 /* C99 or newer */
+        typedef unsigned long long u64;
+        typedef signed long long i64;
         typedef unsigned long long usize;
         typedef signed long long isize;
-        #else                                           /* older than C99 */  
-            typedef unsigned long u64;  
-            typedef signed long i64;
-            typedef unsigned long usize;    
-            typedef signed long isize;
-        #endif
+    #else                                           /* older than C99 */
+        typedef unsigned long u64;
+        typedef signed long i64;
+        typedef unsigned long usize;
+        typedef signed long isize;
     #endif
 
     #if !defined(__STDC_VERSION__) || __STDC_VERSION__ < 199901L
@@ -145,14 +132,14 @@ every data-type has a dynamic and static variant too.
             #endif
         #endif
     #else
-        #if define(MUTILS_USE_STD_INCLUDES)
+        #ifdef MUTILS_USE_STD_INCLUDES
             #include <stdbool.h>
         #endif
     #endif
 #endif
 
-#ifndef MUTILS_MATH
-    #ifndef MUTILS_MATH_CONSTANTS
+#ifdef MUTILS_MATH
+    #ifdef MUTILS_MATH_CONSTANTS
         #ifndef MUTILS_MATH_E
         #define MUTILS_MATH_E               2.71828182845904523536   /* Euler's number, e */
         #endif
@@ -246,8 +233,8 @@ every data-type has a dynamic and static variant too.
         #endif
     #endif
 
-    #ifndef MUTILS_MATH_ALGEBRA
-        #if defined(__GNUC__) && defined(MUTILS_USE_COMPILER_EXTENSIONS)
+    #ifdef MUTILS_MATH_ALGEBRA
+        #if defined(__GNUC__) && defined(MUTILS_USE_COMPILER_EXTENSIONS) && defined(MUTILS_SOURCE)
             #define max(x, y) ({ \
                 __auto_type __x = (x); \
                 __auto_type __y = (y); \
@@ -287,256 +274,522 @@ every data-type has a dynamic and static variant too.
     #endif
 #endif
 
-#ifndef MUTILS_VECTORS
-    #ifndef VECTOR_2_TYPE
-    #define VECTOR_2_TYPE float
+#ifdef MUTILS_VECTORS
+    #ifndef MUTILS_MATH_VECTOR_2_TYPE
+    #define MUTILS_MATH_VECTOR_2_TYPE float
     #endif
 
-    #ifndef VECTOR_3_TYPE
-    #define VECTOR_3_TYPE float
+    #ifndef MUTILS_MATH_VECTOR_3_TYPE
+    #define MUTILS_MATH_VECTOR_3_TYPE float
     #endif
 
-    #ifndef VECTOR_4_TYPE
-    #define VECTOR_4_TYPE float
+    #ifndef MUTILS_MATH_VECTOR_4_TYPE
+    #define MUTILS_MATH_VECTOR_4_TYPE float
     #endif
 
-    typedef union vec2 {
-        struct {
-            VECTOR_2_TYPE x, y;
-        };
-        VECTOR_2_TYPE array[2];
-    } vec2_t;
+    #ifdef MUTILS_SOURCE
+        typedef union vec2_u {
+            struct {
+                MUTILS_MATH_VECTOR_2_TYPE x, y;
+            };
+            MUTILS_MATH_VECTOR_2_TYPE array[2];
+        } vec2_t;
 
-    typedef union vec3 {
-        struct {
-            VECTOR_3_TYPE x, y, z;
-        };
-        struct {
-            VECTOR_3_TYPE r, g, b;
-        }
-        VECTOR_3_TYPE array[3];
-    } vec3_t;
+        typedef union vec3_u {
+            struct {
+                MUTILS_MATH_VECTOR_3_TYPE x, y, z;
+            };
+            struct {
+                MUTILS_MATH_VECTOR_3_TYPE r, g, b;
+            }
+            MUTILS_MATH_VECTOR_3_TYPE array[3];
+        } vec3_t;
 
-    typedef union vec4 {
-        struct {
-            VECTOR_4_TYPE x, y, z, w;
-        };
-        struct {
-            VECTOR_4_TYPE r, g, b, a;
-        }
-        VECTOR_4_TYPE array[4];
-    } vec4_t;
+        typedef union vec4_u {
+            struct {
+                MUTILS_MATH_VECTOR_4_TYPE x, y, z, w;
+            };
+            struct {
+                MUTILS_MATH_VECTOR_4_TYPE r, g, b, a;
+            }
+            MUTILS_MATH_VECTOR_4_TYPE array[4];
+        } vec4_t;
+    #endif
 #endif
 
-#ifndef MUTILS_MATRICES
-    #ifndef GENERIC_MATRIX_TYPE
-    #define GENERIC_MATRIX_TYPE float
+#ifdef MUTILS_MATRICES
+    #ifndef MUTILS_MATH_GENERIC_MATRIX_TYPE
+    #define MUTILS_MATH_GENERIC_MATRIX_TYPE float
     #endif
 
-    #ifndef MATRIX_2x2_TYPE
-    #define MATRIX_2x2_TYPE float
+    #ifndef MUTILS_MATH_MATRIX_2x2_TYPE
+    #define MUTILS_MATH_MATRIX_2x2_TYPE float
     #endif
 
-    #ifndef MATRIX_2x3_TYPE
-    #define MATRIX_2x3_TYPE float
+    #ifndef MUTILS_MATH_MATRIX_2x3_TYPE
+    #define MUTILS_MATH_MATRIX_2x3_TYPE float
     #endif
 
-    #ifndef MATRIX_2x4_TYPE
-    #define MATRIX_2x4_TYPE float
+    #ifndef MUTILS_MATH_MATRIX_2x4_TYPE
+    #define MUTILS_MATH_MATRIX_2x4_TYPE float
     #endif
 
-    #ifndef MATRIX_3x3_TYPE
-    #define MATRIX_3x3_TYPE float
+    #ifndef MUTILS_MATH_MATRIX_3x3_TYPE
+    #define MUTILS_MATH_MATRIX_3x3_TYPE float
     #endif
 
-    #ifndef MATRIX_3x2_TYPE
-    #define MATRIX_3x2_TYPE float
+    #ifndef MUTILS_MATH_MATRIX_3x2_TYPE
+    #define MUTILS_MATH_MATRIX_3x2_TYPE float
     #endif
 
-    #ifndef MATRIX_3x4_TYPE
-    #define MATRIX_3x4_TYPE float
+    #ifndef MUTILS_MATH_MATRIX_3x4_TYPE
+    #define MUTILS_MATH_MATRIX_3x4_TYPE float
     #endif
 
-    #ifndef MATRIX_4x4_TYPE
-    #define MATRIX_4x4_TYPE float
+    #ifndef MUTILS_MATH_MATRIX_4x4_TYPE
+    #define MUTILS_MATH_MATRIX_4x4_TYPE float
     #endif
 
-    #ifndef MATRIX_4x2_TYPE
-    #define MATRIX_4x2_TYPE float
+    #ifndef MUTILS_MATH_MATRIX_4x2_TYPE
+    #define MUTILS_MATH_MATRIX_4x2_TYPE float
     #endif
 
-    #ifndef MATRIX_4x3_TYPE
-    #define MATRIX_4x3_TYPE float
+    #ifndef MUTILS_MATH_MATRIX_4x3_TYPE
+    #define MUTILS_MATH_MATRIX_4x3_TYPE float
     #endif
 
-    typedef struct matXxY {
-        signed long rows;
-        signed long cols;
-        GENERIC_MATRIX_TYPE *data;
-    } matXxY_t;
+    #ifdef MUTILS_SOURCE
+        typedef struct matXxY_s {
+            signed long rows;
+            signed long cols;
+            MUTILS_MATH_GENERIC_MATRIX_TYPE *data;
+        } matXxY_t;
 
-    /*
-        [
-            [a, b],
-            [c, d]
-        ]
-    */
-    typedef union mat2 {
-        struct rows_s {
-            MATRIX_2x2_TYPE row1[2], row2[2];
-        } rows;
-        MATRIX_2x2_TYPE matrix[2][2];
-        struct elements_s {
-            MATRIX_2x2_TYPE a1, a2, b1, b2;
-        } elements;
-        MATRIX_2x2_TYPE flat[4];
-    } mat2_t;
+        /*
+            [
+                [a, b],
+                [c, d]
+            ]
+        */
+        typedef union mat2_u {
+            struct rows_s {
+                MUTILS_MATH_MATRIX_2x2_TYPE row1[2], row2[2];
+            } rows;
+            MUTILS_MATH_MATRIX_2x2_TYPE matrix[2][2];
+            struct elements_s {
+                MUTILS_MATH_MATRIX_2x2_TYPE a1, a2, b1, b2;
+            } elements;
+            MUTILS_MATH_MATRIX_2x2_TYPE flat[4];
+        } mat2_t;
 
-    /*
-        [
-            [a, b, c],
-            [d, e, f]
-        ]
-    */
-    typedef union mat2x3 {
-        struct rows_s {
-            MATRIX_2x3_TYPE row1[3], row2[3];
-        } rows;
-        MATRIX_2x3_TYPE matrix[2][3];
-        struct elements_s {
-            MATRIX_2x3_TYPE a1, a2, a3, b1, b2, b3;
-        } elements;
-        MATRIX_2x3_TYPE flat[6];
-    } mat2x3_t;
+        /*
+            [
+                [a, b, c],
+                [d, e, f]
+            ]
+        */
+        typedef union mat2x3_u {
+            struct rows_s {
+                MUTILS_MATH_MATRIX_2x3_TYPE row1[3], row2[3];
+            } rows;
+            MUTILS_MATH_MATRIX_2x3_TYPE matrix[2][3];
+            struct elements_s {
+                MUTILS_MATH_MATRIX_2x3_TYPE a1, a2, a3, b1, b2, b3;
+            } elements;
+            MUTILS_MATH_MATRIX_2x3_TYPE flat[6];
+        } mat2x3_t;
 
-    /*
-        [
-            [a, b, c, d],
-            [e, f, g, h]
-        ]
-    */
-    typedef union mat2x4 {
-        struct rows_s {
-            MATRIX_2x4_TYPE row1[4], row2[4];
-        } rows;
-        MATRIX_2x4_TYPE matrix[2][4];
-        struct elements_s {
-            MATRIX_2x4_TYPE a1, a2, a3, a4, b1, b2, b3, b4;
-        } elements;
-        MATRIX_2x4_TYPE flat[8];
-    } mat2x4_t;
+        /*
+            [
+                [a, b, c, d],
+                [e, f, g, h]
+            ]
+        */
+        typedef union mat2x4_u {
+            struct rows_s {
+                MUTILS_MATH_MATRIX_2x4_TYPE row1[4], row2[4];
+            } rows;
+            MUTILS_MATH_MATRIX_2x4_TYPE matrix[2][4];
+            struct elements_s {
+                MUTILS_MATH_MATRIX_2x4_TYPE a1, a2, a3, a4, b1, b2, b3, b4;
+            } elements;
+            MUTILS_MATH_MATRIX_2x4_TYPE flat[8];
+        } mat2x4_t;
 
-    /*
-        [
-            [a, b, c, d]
-            [e, f, g, h]
-            [i, j, k, l]
-            [m, n, o, p]
-        ]
-    */
-    typedef union mat4 {
-        struct rows_s {
-            MATRIX_4x4_TYPE row1[4], row2[4], row3[4], row4[4];
-        } rows;
-        MATRIX_4x4_TYPE matrix[4][4];
-        struct elements_s {
-            MATRIX_4x4_TYPE a1, a2, a3, a4, b1, b2, b3, b4, c1, c2, c3, c4, d1, d2,
-                d3, d4;
-        } elements;
-        MATRIX_4x4_TYPE flat[16];
-    } mat4_t;
+        /*
+            [
+                [a, b, c, d]
+                [e, f, g, h]
+                [i, j, k, l]
+                [m, n, o, p]
+            ]
+        */
+        typedef union mat4_u {
+            struct rows_s {
+                MUTILS_MATH_MATRIX_4x4_TYPE row1[4], row2[4], row3[4], row4[4];
+            } rows;
+            MUTILS_MATH_MATRIX_4x4_TYPE matrix[4][4];
+            struct elements_s {
+                MUTILS_MATH_MATRIX_4x4_TYPE a1, a2, a3, a4, b1, b2, b3, b4, c1, c2, c3, c4, d1, d2,
+                    d3, d4;
+            } elements;
+            MUTILS_MATH_MATRIX_4x4_TYPE flat[16];
+        } mat4_t;
 
-    /*
-        [
-            [a, b]
-            [c, d]
-            [e, f]
-            [g, h]
-        ]
-    */
-    typedef union mat4x2 {
-        struct rows_s {
-            MATRIX_4x2_TYPE row1[2], row2[2], row3[2], row4[2];
-        } rows;
-        MATRIX_4x2_TYPE matrix[4][2];
-        struct elements_s {
-            MATRIX_4x2_TYPE a1, a2, b1, b2, c1, c2, d1, d2;
-        } elements;
-        MATRIX_4x2_TYPE flat[8];
-    } mat4x2_t;
+        /*
+            [
+                [a, b]
+                [c, d]
+                [e, f]
+                [g, h]
+            ]
+        */
+        typedef union mat4x2_u {
+            struct rows_s {
+                MUTILS_MATH_MATRIX_4x2_TYPE row1[2], row2[2], row3[2], row4[2];
+            } rows;
+            MUTILS_MATH_MATRIX_4x2_TYPE matrix[4][2];
+            struct elements_s {
+                MUTILS_MATH_MATRIX_4x2_TYPE a1, a2, b1, b2, c1, c2, d1, d2;
+            } elements;
+            MUTILS_MATH_MATRIX_4x2_TYPE flat[8];
+        } mat4x2_t;
 
-    /*
-        [
-            [a, b, c]
-            [d, e, f]
-            [g, h, i]
-            [j, k, l]
-        ]
-    */
-    typedef union mat4x3 {
-        struct rows_s {
-            MATRIX_4x3_TYPE row1[3], row2[3], row3[3], row4[3];
-        } rows;
-        MATRIX_4x3_TYPE matrix[4][3];
-        struct elements_s {
-            MATRIX_4x3_TYPE a1, a2, a3, b1, b2, b3, c1, c2, c3, d1, d2, d3;
-        } elements;
-        MATRIX_4x3_TYPE flat[12];
-    } mat4x3_t;
+        /*
+            [
+                [a, b, c]
+                [d, e, f]
+                [g, h, i]
+                [j, k, l]
+            ]
+        */
+        typedef union mat4x3_u {
+            struct rows_s {
+                MUTILS_MATH_MATRIX_4x3_TYPE row1[3], row2[3], row3[3], row4[3];
+            } rows;
+            MUTILS_MATH_MATRIX_4x3_TYPE matrix[4][3];
+            struct elements_s {
+                MUTILS_MATH_MATRIX_4x3_TYPE a1, a2, a3, b1, b2, b3, c1, c2, c3, d1, d2, d3;
+            } elements;
+            MUTILS_MATH_MATRIX_4x3_TYPE flat[12];
+        } mat4x3_t;
 
-    /*
-        [
-            [a, b, c]
-            [d, e, f]
-            [g, h, i]
-        ]
-    */
-    typedef union mat3 {
-        struct rows_s {
-            MATRIX_3x3_TYPE row1[3], row2[3], row3[3];
-        } rows;
-        MATRIX_3x3_TYPE matrix[3][3];
-        struct elements_s {
-            MATRIX_3x3_TYPE a1, a2, a3, b1, b2, b3, c1, c2, c3;
-        } elements;
-        MATRIX_3x3_TYPE flat[9];
-    } mat3_t;
+        /*
+            [
+                [a, b, c]
+                [d, e, f]
+                [g, h, i]
+            ]
+        */
+        typedef union mat3_u {
+            struct rows_s {
+                MUTILS_MATH_MATRIX_3x3_TYPE row1[3], row2[3], row3[3];
+            } rows;
+            MUTILS_MATH_MATRIX_3x3_TYPE matrix[3][3];
+            struct elements_s {
+                MUTILS_MATH_MATRIX_3x3_TYPE a1, a2, a3, b1, b2, b3, c1, c2, c3;
+            } elements;
+            MUTILS_MATH_MATRIX_3x3_TYPE flat[9];
+        } mat3_t;
 
-    /*
-        [
-            [a, b]
-            [c, d]
-            [e, f]
-        ]
-    */
-    typedef union mat3x2 {
-        struct rows_s {
-            MATRIX_3x2_TYPE row1[2], row2[2], row3[2];
-        } rows;
-        MATRIX_3x2_TYPE matrix[3][2];
-        struct elements_s {
-            MATRIX_3x2_TYPE a1, a2, b1, b2, c1, c2;
-        } elements;
-        MATRIX_3x2_TYPE flat[6];
-    } mat3x2_t;
+        /*
+            [
+                [a, b]
+                [c, d]
+                [e, f]
+            ]
+        */
+        typedef union mat3x2_u {
+            struct rows_s {
+                MUTILS_MATH_MATRIX_3x2_TYPE row1[2], row2[2], row3[2];
+            } rows;
+            MUTILS_MATH_MATRIX_3x2_TYPE matrix[3][2];
+            struct elements_s {
+                MUTILS_MATH_MATRIX_3x2_TYPE a1, a2, b1, b2, c1, c2;
+            } elements;
+            MUTILS_MATH_MATRIX_3x2_TYPE flat[6];
+        } mat3x2_t;
 
-    /*
-        [
-            [a, b, c, d]
-            [e, f, g, h]
-            [i, j, k, l]
-        ]
-    */
-    typedef union mat3x4 {
-        struct rows_s {
-            MATRIX_3x4_TYPE row1[4], row2[4], row3[4];
-        } rows;
-        MATRIX_3x4_TYPE matrix[3][4];
-        struct elements_s {
-            MATRIX_3x4_TYPE a1, a2, a3, a4, b1, b2, b3, b4, c1, c2, c3, c4;
-        } elements;
-        MATRIX_3x4_TYPE flat[12];
-    } mat3x4_t;
+        /*
+            [
+                [a, b, c, d]
+                [e, f, g, h]
+                [i, j, k, l]
+            ]
+        */
+        typedef union mat3x4_u {
+            struct rows_s {
+                MUTILS_MATH_MATRIX_3x4_TYPE row1[4], row2[4], row3[4];
+            } rows;
+            MUTILS_MATH_MATRIX_3x4_TYPE matrix[3][4];
+            struct elements_s {
+                MUTILS_MATH_MATRIX_3x4_TYPE a1, a2, a3, a4, b1, b2, b3, b4, c1, c2, c3, c4;
+            } elements;
+            MUTILS_MATH_MATRIX_3x4_TYPE flat[12];
+        } mat3x4_t;
+    #endif
+#endif
+
+/* HOW TO USE MUTILS_FUNCTIONS_DA
+
+```
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MUTILS_SOURCE 1
+#define MUTILS_USE_STD_INCLUDES 1
+#define MUTILS_FUNCTIONS 1
+#define MUTILS_FUNCTIONS_DA 1
+#include "mutils.h"
+
+MUTILS_FUNCTIONS_DARRAY(numbers, int)
+
+int main(void) {
+    numbers_darray_t xs = {0};
+    for (int x = 0; x < 10; ++x) MUTILS_FUNCTIONS_DA_INSERT_END(&xs, x);
+
+    printf("Initial array:\n");
+    for (size_t i = 0; i < xs.count; ++i) printf("%d ", xs.items[i]);
+    printf("\n");
+
+    MUTILS_FUNCTIONS_DA_REMOVE_LAST(&xs);
+    printf("After removing last:\n");
+    for (size_t i = 0; i < xs.count; ++i) printf("%d ", xs.items[i]);
+    printf("\n");
+
+    MUTILS_FUNCTIONS_DA_INSERT_START(&xs, 99);
+    printf("After adding 99 at the beginning:\n");
+    for (size_t i = 0; i < xs.count; ++i) printf("%d ", xs.items[i]);
+    printf("\n");
+
+    MUTILS_FUNCTIONS_DA_REMOVE_START(&xs);
+    printf("After removing first:\n");
+    for (size_t i = 0; i < xs.count; ++i) printf("%d ", xs.items[i]);
+    printf("\n");
+
+    MUTILS_FUNCTIONS_DA_INSERT_AT(&xs, 3, 77);
+    printf("After inserting 77 at index 3:\n");
+    for (size_t i = 0; i < xs.count; ++i) printf("%d ", xs.items[i]);
+    printf("\n");
+
+    MUTILS_FUNCTIONS_DA_REMOVE_AT(&xs, 2);
+    printf("After removing element at index 2:\n");
+    for (size_t i = 0; i < xs.count; ++i) printf("%d ", xs.items[i]);
+    printf("\n");
+
+    MUTILS_FUNCTIONS_DA_SWAP(&xs, 1, 4);
+    printf("After swapping indexes 1 and 4:\n");
+    for (size_t i = 0; i < xs.count; ++i) printf("%d ", xs.items[i]);
+    printf("\n");
+
+    MUTILS_FUNCTIONS_DA_FREE(xs);
+}
+```
+
+*/
+#ifdef MUTILS_FUNCTIONS
+    #ifdef MUTILS_FUNCTIONS_DA
+        #ifdef MUTILS_SOURCE
+            #if __STDC_VERSION__ >= 199901
+                /* This macro will produce a type with the name of {name}_darray_t 
+                and with and array of type<t> like:
+                    typedef struct {name}_darray_s { \
+                        type<t>* items; \
+                        unsigned long long count; \
+                        unsigned long long capacity; \
+                    } {name}_darray_t;
+                 */
+                #define MUTILS_FUNCTIONS_DARRAY(name, dtype) \
+                typedef struct name##_darray_s { \
+                    dtype* items; \
+                    unsigned long long count; \
+                    unsigned long long capacity; \
+                } name##_darray_t;
+            #else
+                /* This macro will produce a type with the name of {name}_darray_t 
+                and with and array of type<t> like:
+                    typedef struct {name}_darray_s { \
+                        type<t>* items; \
+                        unsigned long count; \
+                        unsigned long capacity; \
+                    } {name}_darray_t;
+                 */
+                #define MUTILS_FUNCTIONS_DARRAY(name, dtype) \
+                typedef struct name##_darray_s { \
+                    dtype* items; \
+                    unsigned long count; \
+                    unsigned long capacity; \
+                } name##_darray_t;
+            #endif
+            
+            #ifdef MUTILS_USE_STD_INCLUDES
+                #if __STDC_VERSION__ >= 199901
+                    #include <stdio.h>
+                #endif
+                #include <string.h>
+                #include <stdlib.h>
+            #endif
+
+            #ifndef MUTILS_FUNCTIONS_DA_INIT_CAP
+                #if defined(__x86_64__) && !defined(__ILP32__)
+                    #define MUTILS_FUNCTIONS_DA_INIT_CAP 32
+                #else /* 64 bits */
+                    #define MUTILS_FUNCTIONS_DA_INIT_CAP 64
+                #endif
+            #endif
+
+            #if __STDC_VERSION__ >= 199901
+                #define MUTILS_FUNCTIONS_DA_INSERT_END(da_array_ptr, item) \
+                do { \
+                    if ((da_array_ptr)->count >= (da_array_ptr)->capacity) { \
+                        if ((da_array_ptr)->capacity == 0) (da_array_ptr)->capacity = MUTILS_FUNCTIONS_DA_INIT_CAP; \
+                        else (da_array_ptr)->capacity *= 2; \
+                        typeof((da_array_ptr)->items) temp = realloc((da_array_ptr)->items, (da_array_ptr)->capacity * sizeof(*(da_array_ptr)->items)); \
+                        if (temp != NULL) { \
+                            (da_array_ptr)->items = temp; \
+                        } else { \
+                            fprintf(stderr, "Memory allocation failed!\n"); \
+                        } \
+                    } \
+                    (da_array_ptr)->items[(da_array_ptr)->count++] = (item); \
+                } while (0)
+
+                #define MUTILS_FUNCTIONS_DA_INSERT_START(darray_ptr, item) \
+                do { \
+                    if ((da_array_ptr)->count >= (da_array_ptr)->capacity) { \
+                        if ((da_array_ptr)->capacity == 0) (da_array_ptr)->capacity = MUTILS_FUNCTIONS_DA_INIT_CAP; \
+                        else (da_array_ptr)->capacity *= 2; \
+                        typeof((da_array_ptr)->items) temp = realloc((da_array_ptr)->items, (da_array_ptr)->capacity * sizeof(*(da_array_ptr)->items)); \
+                        if (temp != NULL) { \
+                            (da_array_ptr)->items = temp; \
+                        } else { \
+                            fprintf(stderr, "Memory allocation failed!\n"); \
+                        } \
+                    } \
+                    memmove((da_array_ptr)->items + 1, (da_array_ptr)->items, (da_array_ptr)->count * sizeof(*(da_array_ptr)->items)); \
+                    (da_array_ptr)->items[0] = (item); \
+                    ++(da_array_ptr)->count; \
+                } while (0)
+
+                #define MUTILS_FUNCTIONS_DA_INSERT_AT(darray_ptr, pos, item) \
+                do { \
+                    if ((pos) >= 0 && (pos) <= (darray_ptr)->count) { \
+                        if ((darray_ptr)->count >= (darray_ptr)->capacity) { \
+                            if ((darray_ptr)->capacity == 0) (darray_ptr)->capacity = MUTILS_FUNCTIONS_DA_INIT_CAP; \
+                            else (darray_ptr)->capacity *= 2; \
+                            typeof((da_array_ptr)->items) temp = realloc((da_array_ptr)->items, (da_array_ptr)->capacity * sizeof(*(da_array_ptr)->items)); \
+                            if (temp != NULL) { \
+                                (da_array_ptr)->items = temp; \
+                            } else { \
+                                fprintf(stderr, "Memory allocation failed!\n"); \
+                            } \
+                        } \
+                        memmove((darray_ptr)->items + (pos) + 1, (darray_ptr)->items + (pos), \
+                        ((darray_ptr)->count - (pos)) * sizeof(*(darray_ptr)->items)); \
+                        (darray_ptr)->items[(pos)] = (item); \
+                        ++(darray_ptr)->count; \
+                    } \
+                } while (0)
+                
+                /*  Why we use a middle variable instead of XOR?
+                    We are using a middle variable because XORing doesn't handle
+                    well complex data-structures like structs, and since the type
+                    of the dynamic_array can be any previously know type it is
+                    safer and better to use a middle variable of type<t> for this.
+                */
+                #define MUTILS_FUNCTIONS_DA_SWAP(darray_ptr, src, dst) \
+                do { \
+                    if ((src) >= 0 && (src) < (darray_ptr)->count && (dst) >= 0 && (dst) < (darray_ptr)->count) { \
+                        typeof((darray_ptr)->items[(src)]) temp = (darray_ptr)->items[(src)]; \
+                        (darray_ptr)->items[(src)] = (darray_ptr)->items[(dst)]; \
+                        (darray_ptr)->items[(dst)] = temp; \
+                    } \
+                } while (0)
+            #else
+                #define MUTILS_FUNCTIONS_DA_INSERT_END(da_array_ptr, item) \
+                do { \
+                    if ((da_array_ptr)->count >= (da_array_ptr)->capacity) { \
+                        if ((da_array_ptr)->capacity == 0) (da_array_ptr)->capacity = MUTILS_FUNCTIONS_DA_INIT_CAP; \
+                        else (da_array_ptr)->capacity *= 2; \
+                        (da_array_ptr)->items = realloc((da_array_ptr)->items, (da_array_ptr)->capacity * sizeof(*(da_array_ptr)->items)); \
+                    } \
+                    (da_array_ptr)->items[(da_array_ptr)->count++] = (item); \
+                } while (0)
+
+                #define MUTILS_FUNCTIONS_DA_INSERT_START(darray_ptr, item) \
+                do { \
+                    if ((da_array_ptr)->count >= (da_array_ptr)->capacity) { \
+                        if ((da_array_ptr)->capacity == 0) (da_array_ptr)->capacity = MUTILS_FUNCTIONS_DA_INIT_CAP; \
+                        else (da_array_ptr)->capacity *= 2; \
+                        (da_array_ptr)->items = realloc((da_array_ptr)->items, (da_array_ptr)->capacity * sizeof(*(da_array_ptr)->items)); \
+                    } \
+                    memmove((da_array_ptr)->items + 1, (da_array_ptr)->items, (da_array_ptr)->count * sizeof(*(da_array_ptr)->items)); \
+                    (da_array_ptr)->items[0] = (item); \
+                    ++(da_array_ptr)->count; \
+                } while (0)
+
+                #define MUTILS_FUNCTIONS_DA_INSERT_AT(darray_ptr, pos, item) \
+                do { \
+                    if ((pos) >= 0 && (pos) <= (darray_ptr)->count) { \
+                        if ((darray_ptr)->count >= (darray_ptr)->capacity) { \
+                            if ((darray_ptr)->capacity == 0) (darray_ptr)->capacity = MUTILS_FUNCTIONS_DA_INIT_CAP; \
+                            else (darray_ptr)->capacity *= 2; \
+                            (da_array_ptr)->items = realloc((da_array_ptr)->items, (da_array_ptr)->capacity * sizeof(*(da_array_ptr)->items)); \
+                        } \
+                        memmove((darray_ptr)->items + (pos) + 1, (darray_ptr)->items + (pos), \
+                        ((darray_ptr)->count - (pos)) * sizeof(*(darray_ptr)->items)); \
+                        (darray_ptr)->items[(pos)] = (item); \
+                        ++(darray_ptr)->count; \
+                    } \
+                } while (0)
+
+                /*  Why we use a middle variable instead of XOR?
+                    We are using a middle variable because XORing doesn't handle
+                    well complex data-structures like structs, and since the type
+                    of the dynamic_array can be any previously know type it is
+                    safer and better to use a middle variable of type<t> for this.
+                */
+                #define MUTILS_FUNCTIONS_DA_SWAP(darray_type, darray_ptr, src, dst) \
+                do { \
+                    if ((src) >= 0 && (src) < (darray_ptr)->count && (dst) >= 0 && (dst) < (darray_ptr)->count) { \
+                        darray_type temp = (darray_ptr)->items[(src)]; \
+                        (darray_ptr)->items[(src)] = (darray_ptr)->items[(dst)]; \
+                        (darray_ptr)->items[(dst)] = temp; \
+                    } \
+                } while (0)
+            #endif
+
+            #define MUTILS_FUNCTIONS_DA_REMOVE_LAST(darray_ptr) \
+            do { \
+                if ((darray_ptr)->count > 0) --(darray_ptr)->count; \
+            } while (0)
+
+            #define MUTILS_FUNCTIONS_DA_REMOVE_START(darray_ptr) \
+            do { \
+                if ((darray_ptr)->count > 0) { \
+                    memmove((darray_ptr)->items, (darray_ptr)->items + 1, ((darray_ptr)->count - 1) * sizeof(*(darray_ptr)->items)); \
+                    --(darray_ptr)->count; \
+                } \
+            } while (0)
+
+            #define MUTILS_FUNCTIONS_DA_REMOVE_AT(darray_ptr, pos) \
+            do { \
+                if ((pos) >= 0 && (pos) < (darray_ptr)->count) { \
+                    memmove((darray_ptr)->items + (pos), (darray_ptr)->items + (pos) + 1, \
+                    ((darray_ptr)->count - (pos) - 1) * sizeof(*(darray_ptr)->items)); \
+                    --(darray_ptr)->count; \
+                } \
+            } while (0)
+
+            /* just because I though it would be better to have a macro for this
+            instead of remebering to call free() on the items field. */
+            #define MUTILS_FUNCTIONS_DA_FREE(darray) \
+            do { \
+                free((darray).items); \
+            } while (0)
+        #endif
+    #endif
 #endif
 
 #endif /* MUTILS_H */
